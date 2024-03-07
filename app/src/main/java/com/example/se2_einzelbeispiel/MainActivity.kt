@@ -81,8 +81,43 @@ fun MainWindow() {
             ) {
                 Text(text = "Abschicken")
             }
+
+            Button(
+                onClick = {
+                    Thread {
+                        val calculationResult = sortNumbersAndRemovePrim(matNr)
+                        serverResult = calculationResult
+                    }.start()
+                },
+            ) {
+                Text(text = "Ziffern sortieren (ohne Prim)")
+            }
         }
     }
+}
+
+private fun sortNumbersAndRemovePrim(number: String) : String {
+    var numberList = mutableListOf<Int>()
+
+    if (number.isNullOrEmpty())
+        return "Keine Gültige Zahl angegeben!"
+
+    for (currentNumber in number) {
+        val currentInt = currentNumber.toString().toInt()
+        if (!isPrime(currentInt))
+            numberList.add(currentInt)
+    }
+
+    numberList.sort()
+
+    return numberList.joinToString("")
+}
+
+private fun isPrime(number: Int): Boolean {
+    // we could do this in a more sophisticated way. But we could not be as performant as this ;)
+    if (number != 2 && number != 3 && number != 5 && number != 7)
+        return false
+    return true
 }
 
 private fun sendMatNrToServer(matNr: String): String {
